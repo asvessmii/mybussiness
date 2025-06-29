@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 import logging
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='/app/src/static', static_url_path='/static')
 CORS(app)
 
 # Настройка логирования
