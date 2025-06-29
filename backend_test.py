@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 """
-Тестирование API для универсального ИИ чат-бота
+Тестирование API для системы управления проектами чат-ботов
 """
 
 import requests
 import json
 import sys
+import time
 from datetime import datetime
+import uuid
 
-class ChatbotAPITester:
-    def __init__(self, base_url="http://localhost:5000"):
+class ProjectAPITester:
+    def __init__(self, base_url="http://localhost:8000"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
-        self.session_id = f"test_session_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        self.session = requests.Session()
+        self.test_project_id = None
         
     def run_test(self, name, method, endpoint, expected_status, data=None, check_response=None):
         """Run a single API test"""
@@ -25,9 +28,11 @@ class ChatbotAPITester:
         
         try:
             if method == 'GET':
-                response = requests.get(url, headers=headers)
+                response = self.session.get(url, headers=headers)
             elif method == 'POST':
-                response = requests.post(url, json=data, headers=headers)
+                response = self.session.post(url, json=data, headers=headers)
+            elif method == 'DELETE':
+                response = self.session.delete(url, headers=headers)
             
             # Check status code
             status_ok = response.status_code == expected_status
@@ -64,97 +69,239 @@ class ChatbotAPITester:
             print(f"❌ Failed - Error: {str(e)}")
             return False, {}
     
-    def test_status(self):
-        """Test the status endpoint"""
-        def check_status_response(data):
-            required_fields = ['status', 'timestamp', 'models_loaded', 'embedding_model', 'llm_model']
-            return all(field in data for field in required_fields)
+    def test_get_projects(self):
+        """Test GET /api/projects endpoint"""
+        def check_projects_response(data):
+            return 'projects' in data and 'status' in data and data['status'] == 'success'
         
         return self.run_test(
-            "API Status",
+            "GET /api/projects - Get all projects",
             "GET",
-            "status",
+            "projects",
+            200,
+            check_response=check_projects_response
+        )
+    
+    def test_create_project(self):
+        """Test POST /api/projects endpoint"""
+        def check_create_response(data):
+            if 'status' in data and data['status'] == 'success' and 'project' in data:
+                self.test_project_id = data['project']['id']
+                return True
+            return False
+        
+        return self.run_test(
+            "POST /api/projects - Create new project",
+            "POST",
+            "projects",
+            201,
+            data={"name": "Тест API", "url": "https://httpbin.org"},
+            check_response=check_create_response
+        )
+    
+    def test_get_project(self):
+        """Test GET /api/projects/{project_id} endpoint"""
+        if not self.test_project_id:
+            print("❌ Cannot test GET project - No project ID available")
+            return False, {}
+        
+        def check_project_response(data):
+            return 'status' in data and data['status'] == 'success' and 'project' in data
+        
+        return self.run_test(
+            f"GET /api/projects/{self.test_project_id} - Get project details",
+            "GET",
+            f"projects/{self.test_project_id}",
+            200,
+            check_response=check_project_response
+        )
+    
+    def test_get_project_status(self):
+        """Test GET /api/projects/{project_id}/status endpoint"""
+        if not self.test_project_id:
+            print("❌ Cannot test GET project status - No project ID available")
+            return False, {}
+        
+        def check_status_response(data):
+            return ('status' in data and data['status'] == 'success' and 
+                    'project_status' in data and 'status' in data['project_status'])
+        
+        return self.run_test(
+            f"GET /api/projects/{self.test_project_id}/status - Get project status",
+            "GET",
+            f"projects/{self.test_project_id}/status",
             200,
             check_response=check_status_response
         )
     
-    def test_chat(self, message):
-        """Test the chat endpoint"""
-        def check_chat_response(data):
-            required_fields = ['response', 'session_id', 'timestamp']
-            return all(field in data for field in required_fields)
+    def test_start_scraping(self):
+        """Test POST /api/projects/{project_id}/scrape endpoint"""
+        if not self.test_project_id:
+            print("❌ Cannot test start scraping - No project ID available")
+            return False, {}
+        
+        def check_scrape_response(data):
+            return 'status' in data and data['status'] == 'success' and 'message' in data
         
         return self.run_test(
-            f"Chat API with message: '{message}'",
+            f"POST /api/projects/{self.test_project_id}/scrape - Start scraping",
             "POST",
-            "chat",
+            f"projects/{self.test_project_id}/scrape",
             200,
-            data={"message": message, "session_id": self.session_id},
+            data={},
+            check_response=check_scrape_response
+        )
+    
+    def test_start_training(self):
+        """Test POST /api/projects/{project_id}/train endpoint"""
+        if not self.test_project_id:
+            print("❌ Cannot test start training - No project ID available")
+            return False, {}
+        
+        def check_train_response(data):
+            return 'status' in data and data['status'] == 'success' and 'message' in data
+        
+        return self.run_test(
+            f"POST /api/projects/{self.test_project_id}/train - Start training",
+            "POST",
+            f"projects/{self.test_project_id}/train",
+            200,
+            data={},
+            check_response=check_train_response
+        )
+    
+    def test_chat_with_project(self):
+        """Test POST /api/projects/{project_id}/chat endpoint"""
+        if not self.test_project_id:
+            print("❌ Cannot test chat - No project ID available")
+            return False, {}
+        
+        def check_chat_response(data):
+            return 'status' in data and 'session_id' in data
+        
+        return self.run_test(
+            f"POST /api/projects/{self.test_project_id}/chat - Chat with bot",
+            "POST",
+            f"projects/{self.test_project_id}/chat",
+            200,
+            data={"message": "Привет, это тестовое сообщение", "session_id": str(uuid.uuid4())},
             check_response=check_chat_response
         )
     
-    def test_upload_document(self):
-        """Test the document upload endpoint"""
-        def check_upload_response(data):
-            required_fields = ['message', 'timestamp']
-            return all(field in data for field in required_fields)
+    def test_generate_code(self):
+        """Test POST /api/projects/{project_id}/generate-code endpoint"""
+        if not self.test_project_id:
+            print("❌ Cannot test code generation - No project ID available")
+            return False, {}
+        
+        def check_code_response(data):
+            return 'status' in data
         
         return self.run_test(
-            "Document Upload API",
+            f"POST /api/projects/{self.test_project_id}/generate-code - Generate integration code",
             "POST",
-            "upload_document",
+            f"projects/{self.test_project_id}/generate-code",
             200,
             data={},
-            check_response=check_upload_response
+            check_response=check_code_response
         )
     
-    def test_knowledge_base(self):
-        """Test the knowledge base endpoint"""
-        def check_kb_response(data):
-            required_fields = ['vector_store_size', 'total_documents', 'embedding_model', 'timestamp']
-            return all(field in data for field in required_fields)
+    def test_delete_project(self):
+        """Test DELETE /api/projects/{project_id} endpoint"""
+        if not self.test_project_id:
+            print("❌ Cannot test delete project - No project ID available")
+            return False, {}
+        
+        def check_delete_response(data):
+            return 'status' in data and data['status'] == 'success' and 'message' in data
         
         return self.run_test(
-            "Knowledge Base API",
-            "GET",
-            "knowledge_base",
+            f"DELETE /api/projects/{self.test_project_id} - Delete project",
+            "DELETE",
+            f"projects/{self.test_project_id}",
             200,
-            check_response=check_kb_response
+            check_response=check_delete_response
         )
     
     def test_error_handling(self):
-        """Test error handling with invalid request"""
-        return self.run_test(
-            "Error Handling - Invalid Request",
+        """Test error handling with invalid requests"""
+        # Test invalid project ID
+        invalid_id = "invalid-id-12345"
+        
+        self.run_test(
+            "Error Handling - Invalid Project ID",
+            "GET",
+            f"projects/{invalid_id}",
+            404,
+        )
+        
+        # Test invalid data for project creation
+        self.run_test(
+            "Error Handling - Invalid Project Data",
             "POST",
-            "chat",
-            500,  # Expecting error
+            "projects",
+            400,
             data={"invalid_field": "test"}
         )
+        
+        # Test rate limiting (this might not trigger depending on the server configuration)
+        print("\n🔍 Testing Rate Limiting...")
+        for i in range(6):  # Try to exceed the 5 per minute limit
+            self.session.post(
+                f"{self.base_url}/api/projects",
+                json={"name": f"Rate Test {i}", "url": "https://example.com"},
+                headers={'Content-Type': 'application/json'}
+            )
+        
+        # Check if the last request was rate limited
+        response = self.session.post(
+            f"{self.base_url}/api/projects",
+            json={"name": "Rate Test Final", "url": "https://example.com"},
+            headers={'Content-Type': 'application/json'}
+        )
+        
+        if response.status_code == 429:
+            self.tests_passed += 1
+            print("✅ Rate limiting is working correctly")
+        else:
+            print("⚠️ Rate limiting test inconclusive - might need longer test period")
     
     def run_all_tests(self):
         """Run all API tests"""
-        print("🚀 Starting API Tests for ИИ Чат-бот\n")
+        print("🚀 Starting API Tests for Project Management System\n")
         
-        # Test status endpoint
-        self.test_status()
+        # Test getting all projects
+        self.test_get_projects()
         
-        # Test chat with different messages
-        self.test_chat("привет")
-        self.test_chat("как дела")
-        self.test_chat("что умеешь")
-        self.test_chat("спасибо")
-        self.test_chat("пока")
+        # Test creating a new project
+        success, _ = self.test_create_project()
         
-        # Test with a long message
-        long_message = "Это очень длинное сообщение для тестирования обработки длинных запросов. " * 5
-        self.test_chat(long_message)
-        
-        # Test document upload
-        self.test_upload_document()
-        
-        # Test knowledge base
-        self.test_knowledge_base()
+        if success:
+            # Test getting project details
+            self.test_get_project()
+            
+            # Test getting project status
+            self.test_get_project_status()
+            
+            # Test starting scraping
+            self.test_start_scraping()
+            
+            # Check status after scraping started
+            print("\n⏳ Waiting 2 seconds for status update...")
+            time.sleep(2)
+            self.test_get_project_status()
+            
+            # Test starting training
+            self.test_start_training()
+            
+            # Test chat with project
+            self.test_chat_with_project()
+            
+            # Test generating integration code
+            self.test_generate_code()
+            
+            # Test deleting the project
+            self.test_delete_project()
         
         # Test error handling
         self.test_error_handling()
@@ -165,7 +312,7 @@ class ChatbotAPITester:
         return self.tests_passed == self.tests_run
 
 def main():
-    tester = ChatbotAPITester()
+    tester = ProjectAPITester()
     success = tester.run_all_tests()
     return 0 if success else 1
 
