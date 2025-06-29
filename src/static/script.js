@@ -62,6 +62,14 @@ class ChatbotUI {
             // Уведомления
             notifications: document.getElementById('notifications')
         };
+        
+        // Отладочная информация
+        console.log('DOM элементы инициализированы:');
+        console.log('statusIndicator:', this.elements.statusIndicator);
+        console.log('statusDot:', this.elements.statusDot);
+        console.log('statusText:', this.elements.statusText);
+        console.log('messageInput:', this.elements.messageInput);
+        console.log('sendButton:', this.elements.sendButton);
     }
     
     // Привязка событий
