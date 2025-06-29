@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Универсальный ИИ Чат-бот</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Заголовок -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <h1>ИИ Чат-бот</h1>
+                </div>
+                <div class="status-indicator" id="statusIndicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Подключение...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Панель управления -->
+            <div class="control-panel">
+                <div class="upload-section">
+                    <h3><i class="fas fa-upload"></i> Загрузка документов</h3>
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="fileInput" accept=".pdf,.docx,.txt" style="display: none;">
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Перетащите файлы сюда или <span class="upload-link">выберите файлы</span></p>
+                            <small>Поддерживаются: PDF, DOCX, TXT (макс. 16MB)</small>
+                        </div>
+                    </div>
+                    <div class="upload-progress" id="uploadProgress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">0%</span>
+                    </div>
+                </div>
+
+                <div class="knowledge-base-info">
+                    <h3><i class="fas fa-database"></i> База знаний</h3>
+                    <div class="kb-stats" id="kbStats">
+                        <div class="stat-item">
+                            <span class="stat-label">Документов:</span>
+                            <span class="stat-value" id="docCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Записей:</span>
+                            <span class="stat-value" id="vectorCount">0</span>
+                        </div>
+                    </div>
+                    <button class="refresh-btn" id="refreshStats">
+                        <i class="fas fa-sync-alt"></i> Обновить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Чат-интерфейс -->
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h2><i class="fas fa-comments"></i> Чат с ИИ</h2>
+                    <button class="clear-chat-btn" id="clearChatBtn">
+                        <i class="fas fa-trash"></i> Очистить
+                    </button>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message">
+                        <div class="message bot-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Здравствуйте! Я ИИ помощник. Загрузите документы и задавайте вопросы по их содержанию.</p>
+                                <small class="message-time">Система готова к работе</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <input type="text" 
+                               id="messageInput" 
+                               placeholder="Введите ваш вопрос..." 
+                               maxlength="500"
+                               autocomplete="off">
+                        <button id="sendButton" class="send-btn" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="input-footer">
+                        <span class="char-counter" id="charCounter">0/500</span>
+                        <span class="typing-indicator" id="typingIndicator" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> ИИ печатает...
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Модальное окно для настроек -->
+        <div class="modal" id="settingsModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Настройки чат-бота</h3>
+                    <button class="modal-close" id="closeModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="setting-group">
+                        <label for="apiUrl">URL API:</label>
+                        <input type="text" id="apiUrl" value="/api">
+                    </div>
+                    <div class="setting-group">
+                        <label for="maxDocs">Макс. документов в поиске:</label>
+                        <input type="number" id="maxDocs" value="5" min="1" max="10">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="cancelSettings">Отмена</button>
+                    <button class="btn btn-primary" id="saveSettings">Сохранить</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Уведомления -->
+        <div class="notifications" id="notifications"></div>
+    </div>
+
+    <!-- Кнопка настроек -->
+    <button class="settings-btn" id="settingsBtn" title="Настройки">
+        <i class="fas fa-cog"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>
