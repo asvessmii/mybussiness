@@ -196,13 +196,14 @@ class ProjectAPITester:
             return False, {}
         
         def check_code_response(data):
+            # We expect either a success response or an error response about the project not being ready
             return 'status' in data
         
         return self.run_test(
             f"POST /api/projects/{self.test_project_id}/generate-code - Generate integration code",
             "POST",
             f"projects/{self.test_project_id}/generate-code",
-            200,
+            200,  # We expect 200 even for error responses
             data={},
             check_response=check_code_response
         )
