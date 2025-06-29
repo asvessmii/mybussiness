@@ -184,7 +184,7 @@ class ProjectAPITester:
             f"POST /api/projects/{self.test_project_id}/chat - Chat with bot",
             "POST",
             f"projects/{self.test_project_id}/chat",
-            200,  # We expect 200 even for error responses
+            400,  # We expect 400 because the project is not ready
             data={"message": "Привет, это тестовое сообщение", "session_id": str(uuid.uuid4())},
             check_response=check_chat_response
         )
