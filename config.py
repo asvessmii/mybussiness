@@ -14,7 +14,7 @@ for dir_path in [UPLOAD_DIR, VECTOR_STORE_DIR, LOGS_DIR]:
 
 # Модели ИИ
 EMBEDDING_MODEL = os.getenv('EMBEDDING_MODEL', 'all-MiniLM-L6-v2')
-LLM_MODEL = os.getenv('LLM_MODEL', 'microsoft/DialoGPT-medium')
+LLM_MODEL = os.getenv('LLM_MODEL', 'distilgpt2')  # Используем более легкую модель
 
 # Flask конфигурация
 FLASK_ENV = os.getenv('FLASK_ENV', 'development')
