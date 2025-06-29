@@ -149,14 +149,21 @@ class ChatbotUI {
     
     // Проверка статуса системы
     async checkSystemStatus() {
+        console.log('Проверка статуса системы...');
+        console.log('API URL:', this.apiUrl);
+        
         try {
             const response = await fetch(`${this.apiUrl}/status`);
+            console.log('Ответ сервера:', response.status, response.statusText);
+            
             const data = await response.json();
+            console.log('Данные ответа:', data);
             
             if (response.ok) {
                 this.updateStatus('online', 'Система готова');
                 this.isConnected = true;
                 this.updateKnowledgeBaseStats(data);
+                console.log('Соединение установлено');
             } else {
                 throw new Error(data.message || 'Ошибка сервера');
             }
