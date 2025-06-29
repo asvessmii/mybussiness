@@ -120,7 +120,7 @@ if __name__ == '__main__':
     # Запуск приложения
     app.run(
         host='0.0.0.0',
-        port=5000,
+        port=8000,
         debug=(config.FLASK_ENV == 'development'),
         threaded=True
     )
