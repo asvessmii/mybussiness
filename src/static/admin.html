@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Управление проектами ИИ чат-ботов</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Боковая панель навигации -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-robot"></i> ИИ Чат-боты</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="projects">
+                    <a href="#"><i class="fas fa-project-diagram"></i> Проекты</a>
+                </li>
+                <li class="nav-item" data-section="create-project">
+                    <a href="#"><i class="fas fa-plus"></i> Создать проект</a>
+                </li>
+                <li class="nav-item" data-section="settings">
+                    <a href="#"><i class="fas fa-cog"></i> Настройки</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Секция проектов -->
+            <section id="projects-section" class="content-section active">
+                <div class="section-header">
+                    <h1><i class="fas fa-project-diagram"></i> Управление проектами</h1>
+                    <button class="btn btn-primary" onclick="showCreateProject()">
+                        <i class="fas fa-plus"></i> Создать новый проект
+                    </button>
+                </div>
+
+                <div class="projects-grid" id="projects-grid">
+                    <!-- Проекты будут загружены динамически -->
+                </div>
+
+                <div class="loading" id="projects-loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> Загрузка проектов...
+                </div>
+            </section>
+
+            <!-- Секция создания проекта -->
+            <section id="create-project-section" class="content-section">
+                <div class="section-header">
+                    <h1><i class="fas fa-plus"></i> Создать новый проект</h1>
+                </div>
+
+                <div class="create-project-form">
+                    <form id="project-form">
+                        <div class="form-group">
+                            <label for="project-name">Название проекта</label>
+                            <input type="text" id="project-name" placeholder="Например: Чат-бот для интернет-магазина">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="project-url">URL сайта для обучения</label>
+                            <input type="url" id="project-url" placeholder="https://example.com">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-rocket"></i> Создать и начать обработку
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="showProjects()">
+                                <i class="fas fa-arrow-left"></i> Назад к проектам
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Секция детального просмотра проекта -->
+            <section id="project-detail-section" class="content-section">
+                <div class="section-header">
+                    <h1 id="project-detail-title">Детали проекта</h1>
+                    <button class="btn btn-secondary" onclick="showProjects()">
+                        <i class="fas fa-arrow-left"></i> Назад к проектам
+                    </button>
+                </div>
+
+                <div class="project-detail-content" id="project-detail-content">
+                    <!-- Контент будет загружен динамически -->
+                </div>
+            </section>
+
+            <!-- Секция чата с проектом -->
+            <section id="chat-section" class="content-section">
+                <div class="section-header">
+                    <h1 id="chat-title">Тестирование чат-бота</h1>
+                    <button class="btn btn-secondary" onclick="showProjects()">
+                        <i class="fas fa-arrow-left"></i> Назад к проектам
+                    </button>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot-message">
+                            <div class="message-content">
+                                Привет! Я готов отвечать на вопросы по этому проекту. Задайте мне любой вопрос!
+                            </div>
+                            <div class="message-time">Сейчас</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input">
+                        <input type="text" id="chat-input" placeholder="Введите ваш вопрос...">
+                        <button onclick="sendChatMessage()" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция настроек -->
+            <section id="settings-section" class="content-section">
+                <div class="section-header">
+                    <h1><i class="fas fa-cog"></i> Настройки системы</h1>
+                </div>
+
+                <div class="settings-content">
+                    <div class="setting-group">
+                        <h3>Параметры скрапинга</h3>
+                        <div class="form-group">
+                            <label>Максимальная глубина сканирования</label>
+                            <input type="number" value="3" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Максимальное количество страниц</label>
+                            <input type="number" value="50" min="5" max="500">
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Параметры модели</h3>
+                        <div class="form-group">
+                            <label>Модель эмбеддингов</label>
+                            <select>
+                                <option selected>all-MiniLM-L6-v2</option>
+                                <option>all-mpnet-base-v2</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Языковая модель</label>
+                            <select>
+                                <option selected>distilgpt2</option>
+                                <option>gpt2</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Модальные окна -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal()"></div>
+
+    <!-- Модальное окно генерации кода -->
+    <div id="code-modal" class="modal">
+        <div class="modal-header">
+            <h3>Код для интеграции</h3>
+            <button onclick="closeModal()" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-content">
+            <div class="code-tabs">
+                <button class="tab-btn active" onclick="showCodeTab('html')">HTML</button>
+                <button class="tab-btn" onclick="showCodeTab('javascript')">JavaScript</button>
+                <button class="tab-btn" onclick="showCodeTab('python')">Python API</button>
+                <button class="tab-btn" onclick="showCodeTab('readme')">README</button>
+            </div>
+            <div class="code-content">
+                <pre><code id="code-display"></code></pre>
+                <button class="btn btn-primary" onclick="copyCode()">
+                    <i class="fas fa-copy"></i> Копировать код
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div id="notifications" class="notifications"></div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
