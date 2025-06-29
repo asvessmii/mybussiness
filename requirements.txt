@@ -24,3 +24,11 @@ python-dotenv==1.0.0
 marshmallow==3.20.1
 redis==5.0.1
 Werkzeug==2.3.7
+playwright==1.40.0
+selenium==4.15.0
+webdriver-manager==4.0.1
+sqlite3-utils==3.36
+uuid==1.30
+opencv-python==4.8.1.78
+aiohttp==3.9.1
+asyncio-throttle==1.0.2
