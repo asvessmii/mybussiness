@@ -196,12 +196,12 @@ def static_files(filename):
 
 if __name__ == '__main__':
     print("🚀 Запуск демо-версии ИИ чат-бота...")
-    print("📍 Интерфейс: http://localhost:5000")
-    print("🔧 API статус: http://localhost:5000/api/status")
+    print("📍 Интерфейс: http://localhost:3000")
+    print("🔧 API статус: http://localhost:3000/api/status")
     
     app.run(
         host='0.0.0.0',
-        port=5000,
+        port=3000,
         debug=True,
         threaded=True
     )
