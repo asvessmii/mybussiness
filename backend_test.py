@@ -11,7 +11,7 @@ from datetime import datetime
 import uuid
 
 class ProjectAPITester:
-    def __init__(self, base_url="http://localhost:3000"):
+    def __init__(self, base_url="http://localhost:8000"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
