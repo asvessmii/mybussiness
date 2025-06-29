@@ -188,11 +188,7 @@ def knowledge_base():
         'timestamp': datetime.now().isoformat()
     })
 
-# Статические файлы
-@app.route('/static/<path:filename>')
-def static_files(filename):
-    """Статические файлы"""
-    return send_from_directory('/app/src/static', filename)
+# Статические файлы обслуживаются автоматически Flask
 
 if __name__ == '__main__':
     print("🚀 Запуск демо-версии ИИ чат-бота...")
