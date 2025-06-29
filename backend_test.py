@@ -203,7 +203,7 @@ class ProjectAPITester:
             f"POST /api/projects/{self.test_project_id}/generate-code - Generate integration code",
             "POST",
             f"projects/{self.test_project_id}/generate-code",
-            200,  # We expect 200 even for error responses
+            400,  # We expect 400 because the project is not ready
             data={},
             check_response=check_code_response
         )
