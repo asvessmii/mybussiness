@@ -47,6 +47,7 @@ def create_app():
     
     # Регистрация blueprint'ов
     app.register_blueprint(chatbot_bp, url_prefix='/api')
+    app.register_blueprint(projects_bp, url_prefix='/api')
     
     # Главная страница
     @app.route('/')
