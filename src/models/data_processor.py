@@ -239,7 +239,7 @@ class DocumentProcessor:
         
         # Нормализация кавычек
         text = re.sub(r'[""„"«»]', '"', text)
-        text = re.sub(r'[''‚']', "'", text)
+        text = re.sub(r"[''‚']", "'", text)
         
         # Удаление повторяющихся знаков препинания
         text = re.sub(r'([.!?]){2,}', r'\1', text)
