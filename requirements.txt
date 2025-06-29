@@ -1,0 +1,9 @@
+requests
+beautifulsoup4
+lxml
+openpyxl
+pdf2image
+pytesseract
+tqdm
+langdetect
+trafilatura
