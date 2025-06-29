@@ -121,6 +121,26 @@ def widget_js():
     except FileNotFoundError:
         return "// Виджет загружается...", 200, {'Content-Type': 'application/javascript'}
 
+@app.route('/status')
+def status_direct():
+    """Статус системы без /api префикса"""
+    return status()
+
+@app.route('/chat', methods=['POST'])
+def chat_direct():
+    """Простой чат без /api префикса"""
+    return chat()
+
+@app.route('/upload_document', methods=['POST'])
+def upload_document_direct():
+    """Заглушка для загрузки документов без /api префикса"""
+    return upload_document()
+
+@app.route('/knowledge_base')
+def knowledge_base_direct():
+    """Информация о базе знаний без /api префикса"""
+    return knowledge_base()
+
 @app.route('/api/status')
 def status():
     """Статус системы"""
