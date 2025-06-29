@@ -84,18 +84,6 @@ def create_app():
         except FileNotFoundError:
             return "// Виджет загружается...", 200, {'Content-Type': 'application/javascript'}
     
-    # Инициализация моделей при запуске
-    @app.before_first_request
-    def initialize_models():
-        """Инициализация ИИ моделей при первом запуске"""
-        try:
-            logging.info("Инициализация ИИ моделей...")
-            chatbot_model = ChatbotModel()
-            app.chatbot_model = chatbot_model
-            logging.info("ИИ модели успешно инициализированы")
-        except Exception as e:
-            logging.error(f"Ошибка инициализации моделей: {e}")
-    
     return app
 
 def setup_logging():
