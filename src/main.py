@@ -20,6 +20,7 @@ from datetime import datetime
 
 import config
 from routes.chatbot import chatbot_bp
+from routes.projects import projects_bp
 from models.chatbot import ChatbotModel
 
 def create_app():
