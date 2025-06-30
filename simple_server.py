@@ -208,6 +208,112 @@ def knowledge_base():
         'timestamp': datetime.now().isoformat()
     })
 
+# API endpoints для управления проектами (заглушки для демо)
+@app.route('/api/projects', methods=['GET'])
+def get_projects():
+    """Получить список проектов"""
+    return jsonify({
+        'projects': [
+            {
+                'id': '1',
+                'name': 'Демо проект',
+                'url': 'https://example.com',
+                'status': 'ready',
+                'created_at': '2025-06-29T20:00:00',
+                'updated_at': '2025-06-29T22:00:00',
+                'pages_scraped': 10,
+                'knowledge_base_size': 50
+            }
+        ]
+    })
+
+@app.route('/api/projects', methods=['POST'])
+def create_project():
+    """Создать новый проект"""
+    data = request.get_json()
+    return jsonify({
+        'id': str(datetime.now().timestamp()),
+        'name': data.get('name', 'Новый проект'),
+        'url': data.get('url', ''),
+        'status': 'created',
+        'created_at': datetime.now().isoformat()
+    })
+
+@app.route('/api/projects/<project_id>', methods=['GET'])
+def get_project(project_id):
+    """Получить информацию о проекте"""
+    return jsonify({
+        'id': project_id,
+        'name': 'Демо проект',
+        'url': 'https://example.com',
+        'status': 'ready',
+        'created_at': '2025-06-29T20:00:00',
+        'updated_at': '2025-06-29T22:00:00',
+        'pages_scraped': 10,
+        'knowledge_base_size': 50
+    })
+
+@app.route('/api/projects/<project_id>/chat', methods=['POST'])
+def project_chat(project_id):
+    """Чат с проектом"""
+    data = request.get_json()
+    message = data.get('message', '').lower()
+    
+    # Простая логика ответов для демо
+    if 'привет' in message or 'hello' in message:
+        response = f'Привет! Я чат-бот проекта {project_id}. Чем могу помочь?'
+    elif 'что' in message or 'как' in message:
+        response = 'Это демо-версия. В полной версии я отвечаю на основе загруженных данных проекта.'
+    else:
+        response = 'Интересный вопрос! В демо-режиме я даю простые ответы. В полной версии система анализирует базу знаний проекта.'
+    
+    return jsonify({
+        'response': response,
+        'project_id': project_id,
+        'session_id': data.get('session_id', 'demo'),
+        'timestamp': datetime.now().isoformat()
+    })
+
+@app.route('/api/projects/<project_id>/scrape', methods=['POST'])
+def start_scraping(project_id):
+    """Запустить скрапинг проекта"""
+    return jsonify({
+        'message': f'Скрапинг проекта {project_id} запущен (демо-режим)',
+        'status': 'started',
+        'timestamp': datetime.now().isoformat()
+    })
+
+@app.route('/api/projects/<project_id>/generate-code', methods=['POST'])
+def generate_code(project_id):
+    """Генерация кода интеграции"""
+    code = f'''<!-- Интеграция чат-бота проекта {project_id} -->
+<div id="chatbot-widget-{project_id}"></div>
+<script>
+window.chatbotConfig = {{
+    projectId: '{project_id}',
+    apiUrl: 'http://localhost:3000/api',
+    theme: 'light'
+}};
+</script>
+<script src="http://localhost:3000/widget.js"></script>'''
+    
+    return jsonify({
+        'code': {
+            'html': code,
+            'javascript': 'window.chatbot.init(window.chatbotConfig);',
+            'python': f'# API для проекта {project_id}\nimport requests\nresponse = requests.post("http://localhost:3000/api/projects/{project_id}/chat", json={{"message": "Hello"}})',
+            'readme': f'# Интеграция чат-бота\n\nПроект: {project_id}\nAPI: http://localhost:3000/api/projects/{project_id}/chat'
+        }
+    })
+
+@app.route('/api/projects/<project_id>', methods=['DELETE'])
+def delete_project(project_id):
+    """Удалить проект"""
+    return jsonify({
+        'message': f'Проект {project_id} удален (демо-режим)',
+        'timestamp': datetime.now().isoformat()
+    })
+
 # Статические файлы обслуживаются автоматически Flask
 
 if __name__ == '__main__':
