@@ -4,7 +4,7 @@
 
 class ChatbotUI {
     constructor() {
-        this.apiUrl = ''; // Убираем /api префикс для preview среды
+        this.apiUrl = '/api'; // API префикс для корректной работы
         this.sessionId = this.generateSessionId();
         this.isConnected = false;
         this.isTyping = false;
