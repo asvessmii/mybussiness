@@ -9,7 +9,7 @@ class ChatbotUI {
         this.isConnected = false;
         this.isTyping = false;
         this.settings = {
-            apiUrl: '',
+            apiUrl: '/api',
             maxDocs: 5
         };
         
